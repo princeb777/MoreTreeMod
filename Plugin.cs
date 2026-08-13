@@ -5,7 +5,7 @@ using HarmonyLib;
 
 namespace RhiaShopRefresh
 {
-    [BepInPlugin("com.osn.rhiashoprefresh", "Rhia Shop Refresh", "2.3.0")]
+    [BepInPlugin("com.osn.rhiashoprefresh", "Rhia Shop Refresh", "2.4.0")]
     public class Plugin : BaseUnityPlugin
     {
         private static FieldInfo currentDateField;
@@ -17,7 +17,7 @@ namespace RhiaShopRefresh
         {
             currentDateField = AccessTools.Field(typeof(WorldTime), "currentGameDate");
             Harmony.CreateAndPatchAll(typeof(Plugin));
-            Logger.LogInfo("Rhia Shop Refresh mod has loaded! (Version 2.3 - Same-Day Refresh Fix)");
+            Logger.LogInfo("Rhia Shop Refresh mod has loaded! (Version 2.4 - Minor Patch Update)");
         }
 
         // Reset the tracker when a new game session/save is loaded
@@ -66,9 +66,9 @@ namespace RhiaShopRefresh
             if (__instance.shop != null && __instance.shop.shopType == ShopType.Rhia)
             {
                 if (WorldTime.GetInstance() == null) return;
-
-                int currentDay = (int)WorldTime.OALJOJMDIMK.day;
-
+                
+                int currentDay = (int)WorldTime.BCOGAGJCFNP.day;
+                
                 // If we haven't refreshed her shop yet in this session for today, force it right before the UI opens!
                 if (lastRefreshedDay != currentDay)
                 {
@@ -77,11 +77,11 @@ namespace RhiaShopRefresh
             }
         }
 
-        // 3. Hook FAEMAMHLJMM (generates Rhia's special item).
+        // 3. Hook JIHDBELJHNI (generates Rhia's special item).
         // Uses Reflection to physically spoof the date to Monday to bypass the hardcoded weekly check.
-        [HarmonyPatch(typeof(Shop), "FAEMAMHLJMM")]
+        [HarmonyPatch(typeof(Shop), "JIHDBELJHNI")]
         [HarmonyPrefix]
-        static void Prefix_FAEMAMHLJMM(Shop __instance)
+        static void Prefix_JIHDBELJHNI(Shop __instance)
         {
             if (__instance.shopType == ShopType.Rhia)
             {
@@ -89,7 +89,7 @@ namespace RhiaShopRefresh
                 if (instance != null && currentDateField != null && !isMocking)
                 {
                     // Update tracker so we don't double-refresh if the UI is opened later
-                    lastRefreshedDay = (int)WorldTime.OALJOJMDIMK.day;
+                    lastRefreshedDay = (int)WorldTime.BCOGAGJCFNP.day;
 
                     savedDate = (GameDate)currentDateField.GetValue(instance);
                     GameDate fakeDate = savedDate;
@@ -101,9 +101,9 @@ namespace RhiaShopRefresh
         }
 
         // Ensure the date is always restored perfectly even if an exception occurs during generation.
-        [HarmonyPatch(typeof(Shop), "FAEMAMHLJMM")]
+        [HarmonyPatch(typeof(Shop), "JIHDBELJHNI")]
         [HarmonyFinalizer]
-        static void Finalizer_FAEMAMHLJMM(Shop __instance)
+        static void Finalizer_JIHDBELJHNI(Shop __instance)
         {
             if (__instance.shopType == ShopType.Rhia)
             {
